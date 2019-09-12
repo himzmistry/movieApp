@@ -1,15 +1,16 @@
 <html>
 
 <head>
-        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/vue"></script>
-        <link rel="stylesheet" type="text/css" href="stylesheet.css">
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <link rel="stylesheet" type="text/css" href="stylesheet.css">
 </head>
 
 <body>
-    <a href="#target">Add Movies</a>
-  
+    <div class="movielink">
+        <a href="#target" class="lk">Add Movies</a>
+    </div>
     <div id="app">
         <h2>{{title}}</h2>
         <div class="row">
@@ -151,7 +152,7 @@
                     app.items.splice(0, 0, movieDetail);
                     myObject.ResetData();
                     const elm = document.getElementById('app');
-                    if(elm) {
+                    if (elm) {
                         elm.scrollIntoView();
                     }
                     alert('Movie added');

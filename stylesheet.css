@@ -93,15 +93,15 @@
         float: right;
     }
 
-    /*
- * The following styles are auto-applied to elements with
- * transition="modal" when their visibility is toggled
- * by Vue.js.
- *
- * You can easily play with the modal transition by editing
- * these styles.
- */
-
+    .movielink {
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        text-align: right;
+        
+        font-size: 24px;
+    }
+    .lk{
+        color: teal;
+    }
     .modal-enter {
         opacity: 0;
     }

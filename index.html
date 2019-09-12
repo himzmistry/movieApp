@@ -1,0 +1,172 @@
+<html>
+
+<head>
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+        <link rel="stylesheet" type="text/css" href="stylesheet.css">
+</head>
+
+<body>
+    <a href="#target">Add Movies</a>
+  
+    <div id="app">
+        <h2>{{title}}</h2>
+        <div class="row">
+            <div class="column" v-for="item in items">
+                <div class="card" v-on:click="getDesc(item)">
+                    <img v-bind:src="item.Poster" alt="Avatar" class="card-image">
+                    <p><b>{{ item.Title }}</b></p>
+                    <p>Year : {{item.Year}}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- use the modal component, pass in the prop -->
+        <modal v-if="showModal" :description='desc' @close="showModal = false">
+        </modal>
+    </div>
+
+</body>
+<script>
+    Vue.component('modal', {
+        template: '#modal-template',
+        props: ['description']
+    })
+    const app = new Vue({
+        el: '#app',
+        data: {
+            title: 'Movies',
+            items: [],
+            showModal: false,
+            desc: ''
+        },
+        mounted() {
+            axios.get('http://www.omdbapi.com/', {
+                params: {
+                    s: 'harry potter',
+                    apikey: 'e0620bd4'
+                }
+            }).then(function (response) {
+                app.items = response.data.Search;
+            }).catch(function (error) {
+                console.log(error);
+            }).then(function () {
+                // always executed
+            });
+        },
+        methods: {
+            getDesc: function (movieItem) {
+
+                if (movieItem.imdbID) {
+                    axios.get('http://www.omdbapi.com/?i=' + movieItem.imdbID + '&plot=full', {
+                        params: {
+                            apikey: 'e0620bd4'
+                        }
+                    }).then(function (response) {
+                        app.showModal = true;
+                        app.desc = response.data.Plot;
+                        // alert(JSON.stringify(response.data.Plot))
+                    }).catch(function (error) {
+                        console.log(error);
+                    }).then(function () {
+                        // always executed
+                    });
+                } else {
+                    app.showModal = true;
+                    app.desc = movieItem.Desc;
+                }
+
+            }
+        }
+    });
+</script>
+
+
+
+
+<!-- template for the modal component -->
+<script type="text/x-template" id="modal-template">
+    <transition name="modal">
+      <div class="modal-mask">
+        <div class="modal-wrapper">
+          <div class="modal-container">
+  
+            <div class="modal-header">
+              <slot name="header">
+                Summary:
+              </slot>
+            </div>
+            <div class="modal-body">
+              <slot name="body">
+                    {{description}}
+              </slot>
+            </div>
+            <div class="modal-footer">
+              <slot name="footer">
+                <button class="modal-default-button" @click="$emit('close')">
+                  OK
+                </button>
+              </slot>
+            </div>
+          </div>
+        </div>
+      </div>
+    </transition>
+  </script>
+<h2 id="target">Enter details to add movie</h2>
+<div id="name">
+    Name:<p>{{ Title }}</p>
+    <p><input type="text" v-model="Title" placeholder="Enter movie name."></p>
+
+    Summary:<p>{{ Desc }}</p>
+    <p>
+        <input type="text" v-model="Desc" placeholder="Enter movie description.">
+    </p>
+
+    Year:<p>{{ Year }}</p>
+    <p><input type="number" v-model="Year" placeholder="Enter release year"></p>
+
+    Enter poster url:<br>
+    <input type="url" v-model="Poster" accept="image/*"><br><br>
+
+    <input type="button" value="Add Movie" v-on:click="Data()">
+    <script>
+        myObject = new Vue({
+            el: '#name',
+            data: {
+                Title: '',
+                Desc: '',
+                Year: '',
+                Poster: ''
+            },
+            methods: {
+                Data: function (event) {
+                    const movieDetail = {
+                        Title: myObject.Title,
+                        Desc: myObject.Desc,
+                        Year: myObject.Year,
+                        Poster: myObject.Poster
+                    }
+                    app.items.splice(0, 0, movieDetail);
+                    myObject.ResetData();
+                    const elm = document.getElementById('app');
+                    if(elm) {
+                        elm.scrollIntoView();
+                    }
+                    alert('Movie added');
+                },
+                ResetData: function () {
+                    myObject.Title = '';
+                    myObject.Desc = '';
+                    myObject.Year = '';
+                    myObject.Poster = '';
+                }
+            }
+        })
+    </script>
+
+
+</div>
+
+</html>
